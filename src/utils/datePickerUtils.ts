@@ -13,7 +13,7 @@ const sundayToMonday:Record<number, number> = {
     6:5
 }
 
-const getDayOfTheWeek = (date:Date):number =>{
+export const getDayOfTheWeek = (date:Date):number =>{
     console.log(date)
     const day = date.getDay();
     console.log(day)
@@ -122,4 +122,8 @@ export const isDisabled = (date:Date, endDate:Date, type:"start"|"end"):boolean 
 export const getHMS = (dateValue:Date):[number, number, number] =>   {
     if(!(dateValue instanceof Date)) return;
     return [dateValue.getHours(), dateValue.getMinutes(), dateValue.getSeconds()];
+}
+export const getNextMonth = (date:Date):number => {
+    const monthValue = date.getMonth();
+    return monthValue === 11 ? 0 : (monthValue + 1);
 }

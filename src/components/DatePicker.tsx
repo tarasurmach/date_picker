@@ -17,7 +17,7 @@ import {
     getInputValueFromDateValue,
     getNextMonthDays,
     getPreviousMonthDays, isDisabled, isValidEndDateValue, isValidStartDateValue,
-    weekDays, months, getHMS
+    weekDays, months, getHMS, getDayOfTheWeek, getNextMonth
 } from "../utils/datePickerUtils";
 
 interface PickDateProps {
@@ -323,14 +323,51 @@ const PickDate = ({dateValue, setDateValue, endDateValue, setEndDateValue}:PickD
         setDateType(target.id as "end"|"start");
         target.style.borderBottom = "1px solid red"
     }
+    const selectThisWeek = (offset=0) => () => {
+        const newDate = new Date();
+        if(offset > 0) {
+            newDate.setDate(newDate.getDate() - offset)
+        }
+        newDate.setHours(0, 0, 0)
+        const dayOfTheWeek = getDayOfTheWeek(newDate)
+        const date = newDate.getDate();
+        const startDate = new Date(newDate);
+        startDate.setDate(date - dayOfTheWeek);
+        setDateValue(startDate);
+        const endDate = new Date(newDate);
+        const endDay = date + (6 - dayOfTheWeek);
+        endDate.setDate(endDay)
+        setEndDateValue(endDate)
+    }
+    const selectThisMonth = (adjustBy?:number) => () => {
+         const newDate = new Date();
+         newDate.setHours(0, 0, 0);
+         newDate.setDate(1);
+         if(adjustBy) {
+             newDate.setMonth(getNextMonth(newDate))
+         }
+         const nextDate = new Date(newDate);
+         nextDate.setMonth(getNextMonth(newDate));
+         nextDate.setDate(0);
+         setDateValue(newDate);
+         setEndDateValue(nextDate)
+    }
+
     const handleMouseLeave = () => {
         const isStart = dateType === "start"
         const activeRef = isStart ? inpRef : endInpRef;
         (activeRef.current as HTMLInputElement).style.color = "aliceblue";
         isStart ? setHoverValue(getInputValueFromDateValue(dateValue) ?? "") : setHoverEndValue(getInputValueFromDateValue(endDateValue) ?? "")
     }
-    //console.log(dateType, endDateValue)
-    const openPopup = () =>{
+    const last7Days = () => {
+        const newDate = new Date();
+        newDate.setHours(0, 0,0);
+        const newEndDate = new Date(newDate)
+        newDate.setDate(newDate.getDate() - 7);
+        setDateValue(newDate);
+        setEndDateValue(newEndDate)
+    }
+    const openPopup = () => {
             if(showPopup) return;
             setShowPopup(true);
     }
@@ -339,7 +376,7 @@ const PickDate = ({dateValue, setDateValue, endDateValue, setEndDateValue}:PickD
             <div className={styles.container} >
                 <span onClick={onPanelPreviousYear} className={styles.arrow}>&laquo; </span>
                 <span onClick={onPreviousPanelMonth} className={styles.arrow}> &lsaquo;  </span>
-                {dateFromInputValue?.getDate() ?? ""} {months[dateFromInputValue?.getMonth()]} {dateFromInputValue?.getFullYear()}
+
                 <span onClick={onPanelNextMonth} className={styles.arrow}>&rsaquo;</span>
                 <span onClick={onPanelNextYear} className={styles.arrow}>&raquo;</span>
                 {dateFromInputValue && <span>{addOptionalZero(dateFromInputValue.getHours())}:{addOptionalZero(dateFromInputValue.getMinutes())}:{addOptionalZero(dateFromInputValue.getSeconds())}</span>}
@@ -392,6 +429,11 @@ const PickDate = ({dateValue, setDateValue, endDateValue, setEndDateValue}:PickD
                         }} key={index} onClick={setDateValueOnCellClick(cell)}>{cell.date} </div>
                     })}
                     <button onClick={handleSubmit}>OK</button>
+                    <button onClick={last7Days}>Last 7 days</button>
+                    <button onClick={selectThisWeek()}>This week</button>
+                    <button onClick={selectThisWeek(7)}>Previous week</button>
+                    <button onClick={selectThisMonth()}>This month</button>
+                    <button onClick={selectThisMonth(1)}>Next month</button>
                 </div>
 
                 <ul className={styles.list} >

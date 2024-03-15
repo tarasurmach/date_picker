@@ -1,15 +1,9 @@
 .container {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    margin: 0;
 }
-.container span {
-    cursor: pointer;
-    transition: opacity 400ms;
-}
-.container span:hover {
-    opacity: 0.5;
-}
+
 .arrow {
     font-size: 2.5em;
     text-align: center;
@@ -18,15 +12,16 @@
 }
 .popup {
     display:flex;
-    justify-content:center;
-    gap:1rem;
+    flex-direction: column;
+    gap:0.6rem;
+    margin-top: 0.6rem;
 }
 .panel {
-    height: 320px;
-    width: 320px;
+    height: 250px;
+    width: 300px;
     display: grid;
     grid-template-columns: repeat(7, 36px); /* Adjust minmax values as needed */
-    gap: 5px;
+    grid-template-rows: repeat(7, 36px);
 }
 .cell {
     cursor: pointer;
@@ -45,7 +40,7 @@
 .cell.inRange, .cell.inRange:hover {
     color: #535bf2;
 
-    
+
 }
 
 .cell.isToday {
@@ -85,4 +80,45 @@
     background: #3a3a3a;
     transition: 400ms;
     border-radius: 6px;
+}
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+
+
+}
+.btns {
+    display: flex;
+    gap:0.2rem
+}
+.btns > button {
+    font-size: 0.8em;
+}
+.selects {
+    display: flex;
+
+}
+.inputs {
+    display: flex;
+    justify-content: space-around;
+}
+.panelDate {
+    display: flex;
+
+    margin-left: 1.3rem;
+    height: 40px;
+    align-items: center;
+    gap: 0.3rem;
+
+}
+.panelDate > span {
+    cursor: pointer;
+}
+.panelDate > p {
+    padding-top: 9px;
+    font-size: 1.3em;
+}
+.panelDate > span:hover {
+    opacity: 0.5;
 }

@@ -374,61 +374,83 @@ const PickDate = ({dateValue, setDateValue, endDateValue, setEndDateValue}:PickD
     return (
         <div ref={divRef} >
             <div className={styles.container} >
-                <span onClick={onPanelPreviousYear} className={styles.arrow}>&laquo; </span>
-                <span onClick={onPreviousPanelMonth} className={styles.arrow}> &lsaquo;  </span>
+                <div className={styles.inputs}>
+                    <span>
+                        From: <input type="text" id={"start"} onFocus={handleFocus} onKeyDown={handleKeyDown(handleSubmit)} value={hoverValue} onChange={handleInputChange} ref={inpRef} onClick={openPopup}/>
+                    </span>
+                    <span>
+                        To: <input type="text" id={"end"} onFocus={handleFocus} onKeyDown={handleKeyDown(handleSubmit)} ref={endInpRef} value={hoverEndValue} onChange={handleInputChange} onClick={openPopup}/>
+                    </span>
+                </div>
 
-                <span onClick={onPanelNextMonth} className={styles.arrow}>&rsaquo;</span>
-                <span onClick={onPanelNextYear} className={styles.arrow}>&raquo;</span>
-                {dateFromInputValue && <span>{addOptionalZero(dateFromInputValue.getHours())}:{addOptionalZero(dateFromInputValue.getMinutes())}:{addOptionalZero(dateFromInputValue.getSeconds())}</span>}
-
-                <input type="text" id={"start"} onFocus={handleFocus} onKeyDown={handleKeyDown(handleSubmit)} value={hoverValue} onChange={handleInputChange} ref={inpRef} onClick={openPopup}/>
-                <input type="text" id={"end"} onFocus={handleFocus} onKeyDown={handleKeyDown(handleSubmit)} ref={endInpRef} value={hoverEndValue} onChange={handleInputChange} onClick={openPopup}/>
             </div>
 
             {showPopup &&
             <div className={styles.popup}>
-                <div  className={styles.panel}>
-                    {weekDays.map((day, index) => <div key={index}>{day}</div>)}
-                    {dateCells.map((cell, index) => {
-                        let cellDate:Date = new Date(cell.year, cell.month, cell.date);
+                <span className={styles.panelDate}>
+                    <span onClick={onPanelPreviousYear} className={styles.arrow}>&laquo; </span>
+                    <span onClick={onPreviousPanelMonth} className={styles.arrow}> &lsaquo;  </span>
+                    <p>{months[panelMonth]} {panelYear}</p>
+                    <span onClick={onPanelNextMonth} className={styles.arrow}>&rsaquo;</span>
+                    <span onClick={onPanelNextYear} className={styles.arrow}>&raquo;</span>
+                </span>
+                <div className={styles.wrapper}>
+                    <div className={styles.panel}>
+                        {weekDays.map((day, index) => <div key={index}>{day}</div>)}
+                        {dateCells.map((cell, index) => {
+                            let cellDate:Date = new Date(cell.year, cell.month, cell.date);
 
-                        let isDisabledCell:boolean = false;
-                        const isStart = dateType === "start";
-                        if(isStart) {
-                            if(endDateValue) {
-                                if(dateValue) {
-                                    cellDate.setHours(...getHMS(dateValue))
-                                }
-                                isDisabledCell = isDisabled(cellDate, endDateValue, "start")
-                            }
-                        }else {
-                            if(dateValue) {
+                            let isDisabledCell:boolean = false;
+                            const isStart = dateType === "start";
+                            if(isStart) {
                                 if(endDateValue) {
-                                    cellDate.setHours(...getHMS(endDateValue))
+                                    if(dateValue) {
+                                        cellDate.setHours(...getHMS(dateValue))
+                                    }
+                                    isDisabledCell = isDisabled(cellDate, endDateValue, "start")
                                 }
-                                isDisabledCell = isDisabled(cellDate, dateValue, "end")
+                            }else {
+                                if(dateValue) {
+                                    if(endDateValue) {
+                                        cellDate.setHours(...getHMS(endDateValue))
+                                    }
+                                    isDisabledCell = isDisabled(cellDate, dateValue, "end")
+                                }
                             }
-                        }
-                        const isChosen = isChosenEndDate(cell) || isChosenDate(cell) ;
-                        const inRange = handleRange(cell);
-                        let style = `${styles.cell} `;
-                        if(isDisabledCell) {
-                            style += `${styles.disabled} `
-                        }
-                        if(inRange) {
-                            style += `${styles.inRange} `
-                        }
-                        if(isChosen) {
-                            style += `${styles.chosen} `
-                        }
-                        if(isToday(cell)) {
-                            style += `${styles.isToday} `
-                        }
-                        return <div className={style} id="cell" onMouseEnter={handleMouseOver(cell)} onMouseLeave={handleMouseLeave} style={{
+                            const isChosen = isChosenEndDate(cell) || isChosenDate(cell) ;
+                            const inRange = handleRange(cell);
+                            let style = `${styles.cell} `;
+                            if(isDisabledCell) {
+                                style += `${styles.disabled} `
+                            }
+                            if(inRange) {
+                                style += `${styles.inRange} `
+                            }
+                            if(isChosen) {
+                                style += `${styles.chosen} `
+                            }
+                            if(isToday(cell)) {
+                                style += `${styles.isToday} `
+                            }
+                            return <div className={style} id="cell" onMouseEnter={handleMouseOver(cell)} onMouseLeave={handleMouseLeave} style={{
 
-                        }} key={index} onClick={setDateValueOnCellClick(cell)}>{cell.date} </div>
-                    })}
-                    <button onClick={handleSubmit}>OK</button>
+                            }} key={index} onClick={setDateValueOnCellClick(cell)}>{cell.date} </div>
+                        })}
+
+                    </div>
+                    <div className={styles.selects}>
+                        <ul className={styles.list} >
+                            {hours.map((hour)=> <li id="setHours" data-value={hour} key={hour} onClick={setHoursOnSelect}>{addOptionalZero(hour)}</li>)}
+                        </ul >
+                        <ul  className={styles.list}>
+                            {minutes.map((hour)=> <li id="setMinutes" data-value={hour} key={hour} onClick={setHoursOnSelect}>{addOptionalZero(hour)}</li>)}
+                        </ul>
+                        <ul  className={styles.list}>
+                            {seconds.map((hour)=> <li id="setSeconds" data-value={hour} key={hour} onClick={setHoursOnSelect}>{addOptionalZero(hour)}</li>)}
+                        </ul>
+                    </div>
+                </div>
+                <div className={styles.btns}>
                     <button onClick={last7Days}>Last 7 days</button>
                     <button onClick={selectThisWeek()}>This week</button>
                     <button onClick={selectThisWeek(7)}>Previous week</button>
@@ -436,15 +458,6 @@ const PickDate = ({dateValue, setDateValue, endDateValue, setEndDateValue}:PickD
                     <button onClick={selectThisMonth(1)}>Next month</button>
                 </div>
 
-                <ul className={styles.list} >
-                    {hours.map((hour)=> <li id="setHours" data-value={hour} key={hour} onClick={setHoursOnSelect}>{addOptionalZero(hour)}</li>)}
-                </ul >
-                <ul  className={styles.list}>
-                    {minutes.map((hour)=> <li id="setMinutes" data-value={hour} key={hour} onClick={setHoursOnSelect}>{addOptionalZero(hour)}</li>)}
-                </ul>
-                <ul  className={styles.list}>
-                    {seconds.map((hour)=> <li id="setSeconds" data-value={hour} key={hour} onClick={setHoursOnSelect}>{addOptionalZero(hour)}</li>)}
-                </ul>
             </div>
             }
         </div>

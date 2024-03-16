@@ -118,6 +118,7 @@
 .panelDate > p {
     padding-top: 9px;
     font-size: 1.3em;
+    color: #A47015;
 }
 .panelDate > span:hover {
     opacity: 0.5;

@@ -36,4 +36,6 @@ The React Date Picker component is a customizable and user-friendly way to selec
 
 ## Project Overview
 
-![](04c53b61-2c71-41f0-9ca3-d108c831eb91.gif){style="display:block; margin: 0 auto"}
+<p align="center">
+    <img src="04c53b61-2c71-41f0-9ca3-d108c831eb91.gif">
+</p>
